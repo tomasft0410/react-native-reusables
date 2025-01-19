@@ -1,3 +1,4 @@
+import * as Slot from '@rn-primitives/slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { Pressable } from 'react-native';
@@ -5,7 +6,7 @@ import { cn } from '../../lib/utils';
 import { TextClassContext } from './text';
 
 const buttonVariants = cva(
-  'group flex items-center justify-center rounded-md web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
+  'group flex flex-row gap-2 items-center justify-center rounded-md web:whitespace-nowrap web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2 web:[&_svg]:pointer-events-none web:[&_svg]:size-4 web:[&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -32,7 +33,7 @@ const buttonVariants = cva(
 );
 
 const buttonTextVariants = cva(
-  'web:whitespace-nowrap text-sm native:text-base font-medium text-foreground web:transition-colors',
+  'text-sm native:text-base font-medium text-foreground web:transition-colors',
   {
     variants: {
       variant: {
@@ -58,15 +59,18 @@ const buttonTextVariants = cva(
 );
 
 type ButtonProps = React.ComponentPropsWithoutRef<typeof Pressable> &
-  VariantProps<typeof buttonVariants>;
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+  };
 
 const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
+  ({ className, variant, size, asChild, ...props }, ref) => {
+    const Component = asChild ? Slot.Pressable : Pressable;
     return (
       <TextClassContext.Provider
         value={buttonTextVariants({ variant, size, className: 'web:pointer-events-none' })}
       >
-        <Pressable
+        <Component
           className={cn(
             props.disabled && 'opacity-50 web:pointer-events-none',
             buttonVariants({ variant, size, className })
