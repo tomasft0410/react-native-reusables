@@ -38,15 +38,22 @@ const MenubarTrigger = React.forwardRef<MenubarPrimitive.TriggerRef, MenubarPrim
     const { value: itemValue } = MenubarPrimitive.useMenuContext();
 
     return (
-      <MenubarPrimitive.Trigger
-        ref={ref}
-        className={cn(
-          'flex flex-row web:cursor-default web:select-none items-center rounded-sm px-3 py-1.5 text-sm native:h-10 native:px-5 native:py-0 font-medium web:outline-none web:focus:bg-accent active:bg-accent web:focus:text-accent-foreground',
-          value === itemValue && 'bg-accent text-accent-foreground',
-          className
+      <TextClassContext.Provider
+        value={cn(
+          'select-none text-sm font-medium web:focus:text-accent-foreground',
+          value === itemValue && 'text-accent-foreground'
         )}
-        {...props}
-      />
+      >
+        <MenubarPrimitive.Trigger
+          ref={ref}
+          className={cn(
+            'flex flex-row web:cursor-default web:select-none items-center rounded-sm px-3 py-1.5 native:h-10 native:px-5 native:py-0 font-medium web:outline-none web:focus:bg-accent active:bg-accent ',
+            value === itemValue && 'bg-accent',
+            className
+          )}
+          {...props}
+        />
+      </TextClassContext.Provider>
     );
   }
 );
@@ -62,10 +69,7 @@ const MenubarSubTrigger = React.forwardRef<
   const Icon = Platform.OS === 'web' ? ChevronRight : open ? ChevronUp : ChevronDown;
   return (
     <TextClassContext.Provider
-      value={cn(
-        'select-none text-sm native:text-lg text-primary',
-        open && 'native:text-accent-foreground'
-      )}
+      value={cn('select-none text-sm text-foreground', open && 'native:text-accent-foreground')}
     >
       <MenubarPrimitive.SubTrigger
         ref={ref}
@@ -155,23 +159,25 @@ const MenubarCheckboxItem = React.forwardRef<
   MenubarPrimitive.CheckboxItemRef,
   MenubarPrimitive.CheckboxItemProps
 >(({ className, children, checked, ...props }, ref) => (
-  <MenubarPrimitive.CheckboxItem
-    ref={ref}
-    className={cn(
-      'relative flex flex-row web:cursor-default items-center web:group rounded-sm py-1.5 native:py-2 pl-8 pr-2 web:outline-none web:focus:bg-accent active:bg-accent',
-      props.disabled && 'web:pointer-events-none opacity-50',
-      className
-    )}
-    checked={checked}
-    {...props}
-  >
-    <View className='absolute left-2 flex h-3.5 w-3.5 items-center justify-center'>
-      <MenubarPrimitive.ItemIndicator>
-        <Check size={14} strokeWidth={3} className='text-foreground' />
-      </MenubarPrimitive.ItemIndicator>
-    </View>
-    <>{children}</>
-  </MenubarPrimitive.CheckboxItem>
+  <TextClassContext.Provider value='select-none text-sm native:text-lg text-popover-foreground web:group-focus:text-accent-foreground'>
+    <MenubarPrimitive.CheckboxItem
+      ref={ref}
+      className={cn(
+        'relative flex flex-row web:cursor-default items-center web:group rounded-sm py-1.5 native:py-2 pl-8 pr-2 web:outline-none web:focus:bg-accent active:bg-accent',
+        props.disabled && 'web:pointer-events-none opacity-50',
+        className
+      )}
+      checked={checked}
+      {...props}
+    >
+      <View className='absolute left-2 flex h-3.5 w-3.5 items-center justify-center'>
+        <MenubarPrimitive.ItemIndicator>
+          <Check size={14} strokeWidth={3} className='text-foreground' />
+        </MenubarPrimitive.ItemIndicator>
+      </View>
+      <>{children}</>
+    </MenubarPrimitive.CheckboxItem>
+  </TextClassContext.Provider>
 ));
 MenubarCheckboxItem.displayName = MenubarPrimitive.CheckboxItem.displayName;
 
@@ -179,22 +185,24 @@ const MenubarRadioItem = React.forwardRef<
   MenubarPrimitive.RadioItemRef,
   MenubarPrimitive.RadioItemProps
 >(({ className, children, ...props }, ref) => (
-  <MenubarPrimitive.RadioItem
-    ref={ref}
-    className={cn(
-      'relative flex flex-row web:cursor-default web:group items-center rounded-sm py-1.5 native:py-2 pl-8 pr-2 web:outline-none web:focus:bg-accent active:bg-accent',
-      props.disabled && 'web:pointer-events-none opacity-50',
-      className
-    )}
-    {...props}
-  >
-    <View className='absolute left-2 flex h-3.5 w-3.5 items-center justify-center'>
-      <MenubarPrimitive.ItemIndicator>
-        <View className='bg-foreground h-2 w-2 rounded-full' />
-      </MenubarPrimitive.ItemIndicator>
-    </View>
-    <>{children}</>
-  </MenubarPrimitive.RadioItem>
+  <TextClassContext.Provider value='select-none text-sm native:text-lg text-popover-foreground web:group-focus:text-accent-foreground'>
+    <MenubarPrimitive.RadioItem
+      ref={ref}
+      className={cn(
+        'relative flex flex-row web:cursor-default web:group items-center rounded-sm py-1.5 native:py-2 pl-8 pr-2 web:outline-none web:focus:bg-accent active:bg-accent',
+        props.disabled && 'web:pointer-events-none opacity-50',
+        className
+      )}
+      {...props}
+    >
+      <View className='absolute left-2 flex h-3.5 w-3.5 items-center justify-center'>
+        <MenubarPrimitive.ItemIndicator>
+          <View className='bg-foreground h-2 w-2 rounded-full' />
+        </MenubarPrimitive.ItemIndicator>
+      </View>
+      <>{children}</>
+    </MenubarPrimitive.RadioItem>
+  </TextClassContext.Provider>
 ));
 MenubarRadioItem.displayName = MenubarPrimitive.RadioItem.displayName;
 
